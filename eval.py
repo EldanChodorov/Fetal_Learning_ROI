@@ -80,8 +80,11 @@ with sess.as_default():
         # pred_map = np.argmax(pred_logits[0], axis=2)
         loss, pred_logits = sess.run([dice_loss, pred], feed_dict=feed_dict)
         print(np.max(pred_logits))
+<<<<<<< HEAD
         print(np.min(pred_logits))
         exit()
+=======
+>>>>>>> 541bb8a6ec133cbeb2734b9fe88c3e6a2693df2c
         pred_map_batch = pred_logits > 0.001
         pred_map = pred_map_batch.squeeze()
         score = vis.add_sample(pred_map, y_batch[0])
