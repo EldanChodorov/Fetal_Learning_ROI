@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import numpy as np
 from matplotlib import pyplot as plt
 
@@ -27,34 +26,4 @@ def show_img(array):
 if __name__ == '__main__':
     # should show 6 images
     show_npz(npz_path)
-=======
-import numpy as np
-from matplotlib import pyplot as plt
 
-npz_path = "C:\\Users\\Eldan Chodorov\\"  # Todo: complete this!
-npz_path_roi = "C:\\Users\\Eldan Chodorov\\"  # Todo: complete this!
-
-
-def show_npz(path):
-
-    data = np.loadz(path)  # dict of arrays
-
-    # if keyError occurs, first print data.keys()
-    first = data["arr_0"]
-    second = data["arr_1"]
-    third = data["arr_2"]
-
-    show_img(first)
-    show_img(second)
-    show_img(third)
-
-def show_img(array):
-    plt.figure()
-    plt.imshow(array)
-    plt.show()
-
-if __name__ == '__main__':
-    # should show 6 images
-    show_npz(npz_path)
->>>>>>> 541bb8a6ec133cbeb2734b9fe88c3e6a2693df2c
-    show_npz(npz_path_roi)

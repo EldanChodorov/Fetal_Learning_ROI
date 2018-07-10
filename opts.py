@@ -12,11 +12,9 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument('--batch_size', type=int, default=10, help='input batch size')
 parser.add_argument('--learning_rate', type=float, default=0.0001, help='learning rate')
-<<<<<<< HEAD
+
 parser.add_argument('--lr_decay', type=float, default=0.9, help='learning rate decay')
-=======
-parser.add_argument('--lr_decay', type=float, default=0.75, help='learning rate decay')
->>>>>>> 541bb8a6ec133cbeb2734b9fe88c3e6a2693df2c
+
 parser.add_argument('--epoch', type=int, default=100, help='# of epochs')
 parser.add_argument('--imSize', type=int, default=256, help='then crop to this size')
 parser.add_argument('--num_channels', type=int, default=3, help='num of channels in images')

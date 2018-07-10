@@ -58,11 +58,8 @@ with tf.name_scope('unet'):
 
 # define loss
 # with tf.name_scope('cross_entropy'):
-<<<<<<< HEAD
-#      cross_entropy_loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(labels=label, logits=pred))
-=======
 #     cross_entropy_loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(labels=label, logits=pred))
->>>>>>> 541bb8a6ec133cbeb2734b9fe88c3e6a2693df2c
+
 # compute dice score for simple evaluation during training
 with tf.name_scope('dice_loss'):
     dice_loss = dice_coef_loss(label, pred)
@@ -117,12 +114,9 @@ with sess.as_default():
             for ti in range(test_samples):
                 x_batch, y_batch = next(test_generator)
 
-<<<<<<< HEAD
                 # tensorflow wants a different tensor ordermean_IU
-=======
-                # tensorflow wants a different tensor order
->>>>>>> 541bb8a6ec133cbeb2734b9fe88c3e6a2693df2c
-                feed_dict = {   
+
+                feed_dict = {
                                 img: x_batch,
                                 label: y_batch,
                             }
