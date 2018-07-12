@@ -50,7 +50,8 @@ def preprocess(img, mean, std, label, normalize_label=True):
     return out_img, label
 
 def deprocess(img, mean, std, label):
-    out_img = img / img.max() # scale to [0,1]
+    out_img = (img + 1)/2
+    # out_img = img / img.max() # scale to [0,1]
     # out_img = (out_img * np.array(std).reshape(1,1,3)) + np.array(std).reshape(1,1,3)
     if out_img.shape[-1] == 3:  # take middle channel :(
         out_img = out_img[:, :, 1]

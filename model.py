@@ -173,3 +173,167 @@ class AdiNet():
         model.add(layers.Dense(num_class, activation='softmax'))
 
 
+
+
+
+class creat_deep_Unet():
+    def __init__(self):
+        print ('build deep Unet ...')
+
+
+    def get_crop_shape(self, target, refer):
+        # width, the 3rd dimension
+        cw = (target.get_shape()[2] - refer.get_shape()[2]).value
+        assert (cw >= 0)
+        if cw % 2 != 0:
+            cw1, cw2 = int(cw/2), int(cw/2) + 1
+        else:
+            cw1, cw2 = int(cw/2), int(cw/2)
+        # height, the 2nd dimension
+        ch = (target.get_shape()[1] - refer.get_shape()[1]).value
+        assert (ch >= 0)
+        if ch % 2 != 0:
+            ch1, ch2 = int(ch/2), int(ch/2) + 1
+        else:
+            ch1, ch2 = int(ch/2), int(ch/2)
+
+        return (ch1, ch2), (cw1, cw2)
+
+    def create_model(self, img_shape=(512, 512, 3), num_classes=1, dropout_rate=None):
+
+        inputs = layers.Input(shape=img_shape)
+        # 1024
+
+        down0 = layers.Conv2D(64, (3, 3), padding='same')(inputs)
+        down0 = layers.Activation('relu')(down0)
+        down0 = layers.Conv2D(64, (3, 3), padding='same')(inputs)
+        down0 = layers.Activation('relu')(down0)
+        plus_0 = layers.Conv2D(32, (2, 2), padding='same')(down0)
+        down0 = layers.MaxPooling2D((2, 2), strides=(2, 2))(down0)
+        down0 = layers.Activation('relu')(down0)
+
+        # 512
+
+        down1 = layers.Conv2D(64, (3, 3), padding='same')(down0)
+        down1 = layers.Activation('relu')(down1)
+        down1 = layers.Conv2D(32, (3, 3), padding='same')(down1)
+        plus_1 = layers.concatenate([down1, down0], axis=3)
+        down1= layers.MaxPooling2D((2, 2), strides=(2, 2))(plus_1)
+        down1 = layers.Activation('relu')(down1)
+
+        # 256
+
+        down2 = layers.Conv2D(64, (3, 3), padding='same')(down1)
+        down2 = layers.Activation('relu')(down2)
+        down2 = layers.Conv2D(32, (2, 2), padding='same')(down2)
+        plus_2 = layers.concatenate([down2, down1], axis=3)
+        down2 = layers.MaxPooling2D((2, 2), strides=(2, 2))(plus_2)
+        down2 = layers.Activation('relu')(down2)
+
+        # 128
+
+        down3 = layers.Conv2D(64, (3, 3), padding='same')(down2)
+        down3 = layers.Activation('relu')(down3)
+        down3 = layers.Conv2D(32, (2, 2), padding='same')(down3)
+        plus_3 =layers.concatenate([down3, down2], axis=3)
+        down3 = layers.MaxPooling2D((2, 2), strides=(2, 2))(plus_3)
+        down3 = layers.Activation('relu')(down3)
+
+        # 64
+
+        down4 = layers.Conv2D(64, (3, 3), padding='same')(down3)
+        down4 = layers.Activation('relu')(down4)
+        down4 = layers.Conv2D(32, (2, 2), padding='same')(down4)
+        plus_4 = layers.concatenate([down4, down3], axis=3)
+        down4 = layers.MaxPooling2D((2, 2), strides=(2, 2))(plus_4)
+        down4 = layers.Activation('relu')(down4)
+
+        # 32
+
+        down5 = layers.Conv2D(64, (3, 3), padding='same')(down4)
+        down5 = layers.Activation('relu')(down5)
+        down5 = layers.Conv2D(32, (2, 2), padding='same')(down5)
+        plus_5 = layers.concatenate([down5, down4], axis=3)
+        down5 = layers.MaxPooling2D((2, 2), strides=(2, 2))(plus_5)
+        down5 = layers.Activation('relu')(down5)
+
+        # 16
+
+        down6 = layers.Conv2D(64, (3, 3), padding='same')(down5)
+        down6 = layers.Activation('relu')(down6)
+        down6 = layers.Conv2D(32, (2, 2), padding='same')(down6)
+        plus_6 = layers.concatenate([down6, down5], axis=3)
+        down6 = layers.MaxPooling2D((2, 2), strides=(2, 2))(plus_6)
+        down6 = layers.Activation('relu')(down6)
+
+        # 8
+
+        up7 = layers.UpSampling2D((2, 2))(down6)
+
+        # 16
+
+        up6 = layers.concatenate([up7, plus_6], axis=3)
+        up6 = layers.Conv2D(64, (3, 3), padding='same')(up6)
+        up6 = layers.Activation('relu')(up6)
+        up6 = layers.Conv2D(32, (3, 3), padding='same')(up6)
+        up6 = layers.concatenate([up6, up7], axis=3)
+        up6 = layers.Activation('relu')(up6)
+        up6 = layers.UpSampling2D((2, 2))(up6)
+
+        # 32
+
+        up5 = layers.concatenate([up6, plus_5], axis=3)
+        up5 = layers.Conv2D(64, (3, 3), padding='same')(up5)
+        up5 = layers.Activation('relu')(up5)
+        up5 = layers.Conv2D(32, (3, 3), padding='same')(up5)
+        up5 = layers.concatenate([up5, up6], axis=3)
+        up5 = layers.Activation('relu')(up5)
+        up5 = layers.UpSampling2D((2, 2))(up5)
+
+        # 64
+
+        up4 = layers.concatenate([up5, plus_4], axis=3)
+        up4 = layers.Conv2D(64, (3, 3), padding='same')(up4)
+        up4 = layers.Activation('relu')(up4)
+        up4 = layers.Conv2D(32, (3, 3), padding='same')(up4)
+        up4 = layers.concatenate([up4, up5], axis=3)
+        up4 = layers.Activation('relu')(up4)
+        up4 = layers.UpSampling2D((2, 2))(up4)
+
+        # 128
+
+        up3 = layers.concatenate([up4, plus_3], axis=3)
+        up3 = layers.Conv2D(64, (3, 3), padding='same')(up3)
+        up3 = layers.Activation('relu')(up3)
+        up3 = layers.Conv2D(32, (3, 3), padding='same')(up3)
+        up3 = layers.concatenate([up3, up4], axis=3)
+        up3 = layers.Activation('relu')(up3)
+        up3 = layers.UpSampling2D((2, 2))(up3)
+
+        # 256
+
+        up2 = layers.concatenate([up3, plus_2], axis=3)
+        up2 = layers.Conv2D(64, (3, 3), padding='same')(up2)
+        up2 = layers.Activation('relu')(up2)
+        up2 = layers.Conv2D(32, (3, 3), padding='same')(up2)
+        up2 = layers.concatenate([up2, up3], axis=3)
+        up2 = layers.Activation('relu')(up2)
+        up2 = layers.UpSampling2D((2, 2))(up2)
+
+        # 512
+
+        up1 = layers.concatenate([up2, plus_1], axis=3)
+        up1 = layers.Conv2D(64, (3, 3), padding='same')(up1)
+        up1 = layers.Activation('relu')(up1)
+        up1 = layers.Conv2D(32, (3, 3), padding='same')(up1)
+        up1 = layers.concatenate([up1, up2], axis=3)
+        up1 = layers.Activation('relu')(up1)
+        up1 = layers.UpSampling2D((2, 2))(up1)
+
+        # 1024
+
+        classify = layers.Conv2D(num_classes, (1, 1), activation='sigmoid')(up1)
+
+        model = Model(inputs=inputs, outputs=classify)
+
+        return model

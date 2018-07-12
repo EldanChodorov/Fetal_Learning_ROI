@@ -34,13 +34,22 @@ def handle_file(path, full_path, new_path):
         # print("     Saved to {}".format(full_path))
 
 
-def preprocess_files(path, new_path):
-    for f in os.listdir(path):
+def preprocess_files(path_data,path_data_test,path_data_train):
+    for i, f in enumerate(os.listdir(path_data)):
         # assume all files are .npz
-        full_path = os.path.join(path, f)
-        new_f = os.path.join(new_path, f)
-        if not os.path.exists(new_f):
+        new_path_test  = os.path.join(path_data_test, f)
+        new_path_train  = os.path.join(path_data_train, f)
+        if i % 10 == 0:
+            full_path = os.path.join(path_data, f)
+            new_f = os.path.join(path_data_test, f)
+        else:
+            full_path = os.path.join(path_data, f)
+            new_f = os.path.join(path_data_train, f)
+        exits_in_test = os.path.exists(new_path_test)
+        exits_in_train = os.path.exists(new_path_train)
+        if not exits_in_test and not exits_in_train:
             handle_file(f, full_path, new_f)
+
 
 
 def validate_test_gt():
@@ -60,11 +69,13 @@ def main_preprocess():
 
     data_path = os.path.join(data_root_path, DATA)
     data_new_path = os.path.join(root_path, "train", "img", "0")
-    preprocess_files(data_path, data_new_path)
+    data_new_path_test = os.path.join(root_path, "test", "img", "0")
+    preprocess_files(data_path, data_new_path_test,data_new_path)
 
     labels_path = os.path.join(data_root_path, LABELS)
     labels_new_path = os.path.join(root_path, "train", "gt", "0")
-    preprocess_files(labels_path, labels_new_path)
+    labels_new_path_test = os.path.join(root_path, "test", "gt", "0")
+    preprocess_files(labels_path, labels_new_path_test,labels_new_path)
 
 
 if __name__ == '__main__':
