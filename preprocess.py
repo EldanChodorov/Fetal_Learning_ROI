@@ -110,7 +110,7 @@ def preprocess_files(data_path,labels_path, data_new_path_train,labels_new_path_
     data_list = os.listdir(data_path)
 
     for i, f in enumerate(data_list):
-        print(f)
+        # print(f)
         if i % 10 == 0:
             full_path_data = os.path.join(data_path, f)
             full_path_label = os.path.join(labels_path, f)
@@ -122,10 +122,10 @@ def preprocess_files(data_path,labels_path, data_new_path_train,labels_new_path_
             new_f_data = os.path.join(data_new_path_train, f)
             new_f_label = os.path.join(labels_new_path_train, f)
 
-        print(new_f_data)
+        # print(new_f_data)
         handle_file(f, full_path_data, new_f_data)
-        print(new_f_label)
-        print('-------')
+        # print(new_f_label)
+        # print('-------')
         handle_file(f, full_path_label, new_f_label)
 
 

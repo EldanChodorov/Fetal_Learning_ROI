@@ -9,6 +9,7 @@
 from keras import backend as K
 import numpy as np
 from PIL import Image
+from PIL import ImageDraw
 import os, copy, shutil, json
 from skimage import measure
 
@@ -60,6 +61,12 @@ class VIS:
             I.paste(im,(0,0))
             I.paste(gt,(256,0))
             I.paste(seg,(512,0))
+            draw = ImageDraw.Draw(I)
+            draw.text((0, 0),"Sample Image",255)
+            draw = ImageDraw.Draw(I)
+            draw.text((256, 0),"GT Image",255)
+            draw = ImageDraw.Draw(I)
+            draw.text((512, 0),"Prediction Image",255)
             I.save(os.path.join(self.path, 'inferred_images', name))
         else:   
             seg.save(os.path.join(self.path, 'inferred_images', name))

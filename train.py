@@ -19,7 +19,7 @@ tf.set_random_seed(SEED)
 import time
 import os, shutil
 
-from model import UNet
+from model import UNet,creat_deep_Unet
 from utils import dice_coef, dice_coef_loss
 from loader import dataLoader
 from utils import VIS, mean_IU
@@ -27,7 +27,7 @@ from utils import VIS, mean_IU
 from opts import *
 from opts import dataset_mean, dataset_std # set them in opts
 
-CHECKPOINT = os.getcwd() + "\\checkpoints"
+CHECKPOINT = os.getcwd() + "\\checkpoints_finish_traning"
 
 # save and compute metrics
 vis = VIS(save_path=CHECKPOINT)
@@ -40,9 +40,9 @@ sess = tf.Session(config=config)
 
 ''' Users define data loader (with train and test) '''
 img_shape = [opt.imSize, opt.imSize, opt.num_channels]
-train_generator, train_samples = dataLoader(os.getcwd()+'\\train\\', opt.batch_size,img_shape, mean=dataset_mean,
+train_generator, train_samples = dataLoader(os.getcwd()+'\\train1\\', opt.batch_size,img_shape, mean=dataset_mean,
                                             std=dataset_std)
-test_generator, test_samples = dataLoader(os.getcwd()+'\\test\\', 1,  img_shape, train_mode=False,mean=dataset_mean, std=dataset_std)
+test_generator, test_samples = dataLoader(os.getcwd()+'\\test1\\', 1,  img_shape, train_mode=False,mean=dataset_mean, std=dataset_std)
 # test_generator, test_samples = dataLoader(opt.data_path+'/test2/', 1,  img_shape, train_mode=False,mean=dataset_mean, std=dataset_std)
 
 if opt.iter_epoch == 0:
@@ -55,12 +55,19 @@ with tf.name_scope('unet'):
     img = model.input
     pred = model.output
 
+# with tf.name_scope('unet'):
+#     model = creat_deep_Unet().create_model(img_shape=img_shape, num_class=opt.num_class)
+#     img = model.input
+#     pred = model.output
 
 # define loss
 # with tf.name_scope('cross_entropy'):
 #     cross_entropy_loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(labels=label, logits=pred))
 
 # compute dice score for simple evaluation during training
+with tf.name_scope('dice_loss_test'):
+    dice_loss_test = dice_coef_loss(label, pred)
+
 with tf.name_scope('dice_loss'):
     dice_loss = dice_coef_loss(label, pred)
 # define optimizer
@@ -81,6 +88,7 @@ if opt.load_from_checkpoint == '':
             os.remove(os.path.join(CHECKPOINT, item))
 # define summary for tensorboard
 # tf.summary.scalar('cross_entropy_loss', cross_entropy_loss)
+test_dice = tf.summary.scalar('dice_loss_test',dice_loss_test)
 tf.summary.scalar('dice_loss', dice_loss)
 tf.summary.scalar('learning_rate', learning_rate)
 summary_merged = tf.summary.merge_all()
@@ -121,14 +129,14 @@ with sess.as_default():
                                 label: y_batch,
                             }
                 # loss, pred_logits = sess.run([cross_entropy_loss, pred], feed_dict=feed_dict)
-                loss, pred_logits = sess.run([dice_loss, pred], feed_dict=feed_dict)
+                loss, pred_logits,summary_test = sess.run([dice_loss_test, pred,test_dice], feed_dict=feed_dict)
                 # pred_map_batch = np.argmax(pred_logits, axis=3)
                 pred_map_batch = pred_logits > 0.5
                 # import pdb; pdb.set_trace()
                 for pred_map, y in zip(pred_map_batch, y_batch):
                     score = vis.add_sample(pred_map.squeeze(), y)
             vis.compute_scores(suffix=it)
-        
+            train_writer.add_summary(summary_test,it)
         x_batch, y_batch = next(train_generator)
 
         feed_dict = {   img: x_batch,

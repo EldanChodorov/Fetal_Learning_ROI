@@ -199,9 +199,11 @@ class creat_deep_Unet():
 
         return (ch1, ch2), (cw1, cw2)
 
-    def create_model(self, img_shape=(512, 512, 3), num_classes=1, dropout_rate=None):
+    def create_model(self, img_shape=(512, 512, 3), num_class=1, dropout_rate=None):
+        concat_axis = 3
 
-        inputs = layers.Input(shape=img_shape)
+        shape = img_shape + [1] if len(img_shape) == 1 else img_shape
+        inputs = layers.Input(shape=shape)
         # 1024
 
         down0 = layers.Conv2D(64, (3, 3), padding='same')(inputs)
@@ -332,8 +334,8 @@ class creat_deep_Unet():
 
         # 1024
 
-        classify = layers.Conv2D(num_classes, (1, 1), activation='sigmoid')(up1)
+        classify = layers.Conv2D(1, (1, 1), activation='sigmoid')(up1)
 
-        model = Model(inputs=inputs, outputs=classify)
+        model = models.Model(inputs=inputs, outputs=classify)
 
         return model
