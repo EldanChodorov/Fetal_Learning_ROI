@@ -1,11 +1,4 @@
 
-'''
- * @author [Zizhao Zhang]
- * @email [zizhao@cise.ufl.edu]
- * @create date 2017-05-19 03:06:43
- * @modify date 2017-05-19 03:06:43
- * @desc [description]
-'''
 
 from data_generator.image import ImageDataGenerator#, ClassDataGenerator
 import scipy.misc as misc

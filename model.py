@@ -1,10 +1,4 @@
-'''
- * @author [Zizhao Zhang]
- * @email [zizhao@cise.ufl.edu]
- * @create date 2017-05-25 02:21:13
- * @modify date 2017-05-25 02:21:13
- * @desc [description]
-'''
+
 import tensorflow as tf
 import keras
 from keras import models

@@ -1,10 +1,4 @@
-'''
- * @author [Zizhao Zhang]
- * @email [zizhao@cise.ufl.edu]
- * @create date 2017-05-19 03:06:32
- * @modify date 2017-05-19 03:06:32
- * @desc [description]
-'''
+
 
 from __future__ import absolute_import
 from __future__ import division

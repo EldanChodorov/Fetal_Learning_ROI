@@ -1,10 +1,4 @@
-'''
- * @author [Zizhao Zhang]
- * @email [zizhao@cise.ufl.edu]
- * @create date 2017-05-25 02:20:01
- * @modify date 2017-05-25 02:20:01
- * @desc [description]
-'''
+
 
 import argparse
 import os

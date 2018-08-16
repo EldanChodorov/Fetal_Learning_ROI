@@ -1,10 +1,4 @@
-'''
- * @author [Zizhao Zhang]
- * @email [zizhao@cise.ufl.edu]
- * @create date 2017-07-03 11:25:40
- * @modify date 2017-07-03 11:25:40
- * @desc [description]
-'''
+
 
 from keras import backend as K
 import numpy as np
